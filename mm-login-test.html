@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MemeMorphs SIWE Login Test</title>
+  <style>
+    body {
+      background: #050816;
+      color: #e0f5ff;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #4fd1ff;
+      text-shadow: 0 0 10px #00f0ff;
+    }
+    button {
+      background: linear-gradient(90deg, #00e5ff, #7b61ff);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      color: #050816;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    #status, #result {
+      width: 90%;
+      max-width: 600px;
+      background: #080b1b;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #202744;
+    }
+    #status {
+      color: #9ae6ff;
+    }
+    #result {
+      color: #e9f5ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>MemeMorphs — Wallet Login Test</h1>
+  <button id="loginBtn">Connect Wallet & Login</button>
+  <div id="status">Status: idle</div>
+  <div id="result">Result will appear here…</div>
+
+  <script>
+    // ТВОЯТ Supabase Functions base URL
+    const FN_BASE = "https://jfrtjbnnqvchrklgrres.supabase.co/functions/v1";
+
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+    const btn = document.getElementById("loginBtn");
+
+    function setStatus(msg) {
+      statusEl.textContent = "Status: " + msg;
+    }
+    function setResult(obj) {
+      resultEl.textContent = typeof obj === "string"
+        ? obj
+        : JSON.stringify(obj, null, 2);
+    }
+
+    async function login() {
+      try {
+        if (!window.ethereum) {
+          alert("MetaMask (или друг wallet) не е открит в браузъра.");
+          return;
+        }
+        btn.disabled = true;
+        setStatus("connecting wallet…");
+
+        // 1) Взимаме акаунта от MetaMask
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts"
+        });
+        const account = accounts[0];
+        setStatus("wallet connected: " + account);
+
+        // 2) Взимаме nonce от Supabase функцията
+        setStatus("fetching nonce…");
+        const nonceRes = await fetch(FN_BASE + "/siwe/nonce");
+        const nonceJson = await nonceRes.json();
+        if (!nonceRes.ok) {
+          setStatus("nonce error");
+          setResult(nonceJson);
+          btn.disabled = false;
+          return;
+        }
+        const { key, nonce } = nonceJson;
+
+        // 3) Съобщението, което потребителят подписва
+        const message = `MemeMorphs Login
+Address: ${account}
+Nonce: ${nonce}`;
+
+        setStatus("signing message in wallet…");
+        const signature = await window.ethereum.request({
+          method: "personal_sign",
+          params: [message, account]
+        });
+
+        // 4) Изпращаме към /siwe/verify
+        setStatus("verifying on backend…");
+        const verifyRes = await fetch(FN_BASE + "/siwe/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ key, message, signature })
+        });
+
+        const verifyJson = await verifyRes.json();
+        if (!verifyRes.ok) {
+          setStatus("verify error");
+          setResult(verifyJson);
+          btn.disabled = false;
+          return;
+        }
+
+        // 5) Успешен login — пазим токена
+        setStatus("login success");
+        setResult(verifyJson);
+
+        if (verifyJson.token) {
+          localStorage.setItem("mm_token", verifyJson.token);
+          localStorage.setItem("mm_address", verifyJson.address);
+        }
+
+      } catch (err) {
+        console.error(err);
+        setStatus("error");
+        setResult(String(err));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", login);
+  </script>
+</body>
+</html>
