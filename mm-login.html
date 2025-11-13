@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MemeMorphs — Wallet Login & Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, #0b1220 0, #020617 45%, #000000 100%);
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(15,23,42,0.98), rgba(15,23,42,0.75));
+      border-bottom: 1px solid rgba(59,130,246,0.35);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo-title {
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-main {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #4fd1ff, #a855f7);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    #wallet-button {
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 6px 14px;
+      border: 1px solid rgba(56,189,248,0.9);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.25), rgba(15,23,42,0.95));
+      color: #e0f2fe;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 18px rgba(56,189,248,0.55);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+    #wallet-button span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,0.9);
+    }
+    #wallet-button.disconnected span.dot {
+      background: #f97316;
+      box-shadow: 0 0 12px rgba(249,115,22,0.9);
+    }
+    #wallet-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 26px rgba(56,189,248,0.9);
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 18px 16px 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.6fr);
+      gap: 18px;
+    }
+
+    .panel {
+      border-radius: 20px;
+      padding: 18px 16px;
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,0.24), transparent 60%),
+        radial-gradient(circle at bottom, rgba(129,140,248,0.28), transparent 65%),
+        rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,255,0.4);
+      box-shadow: 0 0 36px rgba(37,99,235,0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(34,197,94,0.22), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: #a5b4fc;
+      margin-bottom: 10px;
+    }
+    .status-label {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(56,189,248,0.7);
+      margin-bottom: 10px;
+    }
+    .status-label span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+    .status-label.error span.dot {
+      background: #ef4444;
+      box-shadow: 0 0 10px rgba(248,113,113,0.95);
+    }
+    .status-label.idle span.dot {
+      background: #f97316;
+      box-shadow: 0 0 10px rgba(249,115,22,0.95);
+    }
+    .status-text {
+      font-size: 12px;
+      color: #e5e7eb;
+    }
+
+    pre {
+      margin-top: 8px;
+      font-size: 11px;
+      background: rgba(15,23,42,0.9);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(15,118,110,0.5);
+      max-height: 280px;
+      overflow: auto;
+      color: #a5f3fc;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+
+    /* PROFILE CARD */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .avatar-wrap {
+      width: 84px;
+      height: 84px;
+      border-radius: 22px;
+      background: radial-gradient(circle at top, #4f46e5, #0f172a);
+      border: 2px solid rgba(56,189,248,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 28px rgba(56,189,248,0.8);
+    }
+    .avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .avatar-initials {
+      font-size: 32px;
+      font-weight: 700;
+      color: #e0f2fe;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 12px;
+      margin-top: 8px;
+    }
+    .field-full {
+      grid-column: 1 / -1;
+    }
+    label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 3px;
+    }
+    input, textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      font-size: 13px;
+      padding: 7px 9px;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    input:focus, textarea:focus {
+      border-color: rgba(56,189,248,0.9);
+      box-shadow: 0 0 16px rgba(56,189,248,0.65);
+      background: rgba(15,23,42,1);
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    input[readonly] {
+      opacity: 0.8;
+      cursor: default;
+    }
+
+    .btn-row {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-primary, .btn-secondary {
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: radial-gradient(circle at top left, #4ade80, #16a34a);
+      color: #022c22;
+      box-shadow: 0 0 24px rgba(34,197,94,0.85);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(59,130,246,0.7);
+      color: #e5e7eb;
+    }
+    .btn-secondary:hover {
+      background: rgba(30,64,175,0.7);
+    }
+
+    .profile-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+
+    footer {
+      padding: 10px 16px 18px;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: center;
+      border-top: 1px solid rgba(31,41,55,0.9);
+      background: rgba(3,7,18,0.96);
+    }
+    footer a {
+      color: #4fd1ff;
+      text-decoration: none;
+      margin: 0 4px;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .profile-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+      .avatar-wrap {
+        margin-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-title">
+      <div class="logo-main">MEMEMORPHS</div>
+      <div class="logo-sub">Digital Evolution · Wallet Login & Profile</div>
+    </div>
+    <button id="wallet-button" class="disconnected">
+      <span class="dot"></span>
+      <span id="wallet-label">Connect Wallet</span>
+    </button>
+  </header>
+
+  <main>
+    <!-- LEFT: LOGIN / STATUS -->
+    <section class="panel">
+      <div class="panel-inner">
+        <h2>Wallet Login</h2>
+        <div id="status-pill" class="status-label idle">
+          <span class="dot"></span>
+          <span class="status-text" id="status-text">Status: idle</span>
+        </div>
+        <div class="hint">
+          Connect your Base wallet. We’ll ask you to sign a message (no gas, no funds moved)
+          to verify ownership of your address.
+        </div>
+        <pre id="result-box">{}</pre>
+      </div>
+    </section>
+
+    <!-- RIGHT: PROFILE (появява се след логин) -->
+    <section class="panel">
+      <div class="panel-inner">
+        <h2>Profile</h2>
+        <div class="hint">
+          After connecting your wallet, you can edit your public MemeMorph Explorer profile.
+          Data is stored in Supabase for future sync.
+        </div>
+
+        <div id="profile-section" style="display:none; margin-top: 10px;">
+          <div class="profile-grid">
+            <div class="avatar-wrap">
+              <img id="avatar-img" src="" alt="Avatar" style="display:none;">
+              <div id="avatar-initials" class="avatar-initials">MM</div>
+            </div>
+            <div>
+              <div class="fields">
+                <div class="field-full">
+                  <label for="wallet-address">Wallet</label>
+                  <input id="wallet-address" type="text" readonly />
+                </div>
+                <div>
+                  <label for="display-name">Display Name</label>
+                  <input id="display-name" type="text" placeholder="MemeMorph Explorer" />
+                </div>
+                <div>
+                  <label for="handle">@ Handle</label>
+                  <input id="handle" type="text" placeholder="@mememorph" />
+                </div>
+                <div class="field-full">
+                  <label for="bio">Bio</label>
+                  <textarea id="bio" placeholder="Short bio about you or your MemeMorph quests..."></textarea>
+                </div>
+                <div class="field-full">
+                  <label for="avatar-url">Avatar URL</label>
+                  <input id="avatar-url" type="text" placeholder="https://..." />
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn-secondary" id="btn-random-avatar">
+                  Random avatar
+                </button>
+                <button type="button" class="btn-primary" id="btn-save-profile">
+                  Save Profile
+                </button>
+              </div>
+
+              <div class="profile-note">
+                If no avatar URL is set, a generated identicon-style avatar will be used
+                based on your wallet address.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="profile-locked" style="margin-top:16px; font-size:12px; color:#9ca3af;">
+          Connect and sign in with your wallet to unlock profile editing.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 <strong>MemeMorph Digital Evolution</strong>. All rights reserved.
+    <a href="index.html">Home</a> ·
+    <a href="terms.html">Terms</a> ·
+    <a href="privacy.html">Privacy</a>
+  </footer>
+
+  <!-- Supabase JS (UMD) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    // ========= CONFIG =========
+    const SUPABASE_URL = "https://jfrtjbnnqvchrklgrres.supabase.co";
+
+    // !!! ТУК ТРЯБВА ДА СИ СЛОЖИШ ТВОЯ ANON KEY !!!
+    // Влез в Supabase → Project Settings → API → "anon public" key
+    // и замени текста долу между кавичките с твоя ключ:
+    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_SUPABASE_ANON_KEY";
+
+    const SIWE_BASE = SUPABASE_URL + "/functions/v1/siwe";
+    const BASE_CHAIN_ID_DEC = 8453;        // Base Mainnet
+    const BASE_CHAIN_ID_HEX = "0x2105";    // 8453 в hex
+
+    let supabaseClient = null;
+    if (!SUPABASE_ANON_KEY.startsWith("REPLACE_WITH_")) {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+      console.warn("Supabase anon key is not set in mm-login.html.");
+    }
+
+    let currentAddress = null;
+    let currentToken = null;
+
+    const walletButton  = document.getElementById("wallet-button");
+    const walletLabel   = document.getElementById("wallet-label");
+    const statusTextEl  = document.getElementById("status-text");
+    const statusPill    = document.getElementById("status-pill");
+    const resultBox     = document.getElementById("result-box");
+    const profileSection = document.getElementById("profile-section");
+    const profileLocked  = document.getElementById("profile-locked");
+
+    const walletAddressInput = document.getElementById("wallet-address");
+    const displayNameInput   = document.getElementById("display-name");
+    const handleInput        = document.getElementById("handle");
+    const bioInput           = document.getElementById("bio");
+    const avatarUrlInput     = document.getElementById("avatar-url");
+    const avatarImg          = document.getElementById("avatar-img");
+    const avatarInitials     = document.getElementById("avatar-initials");
+
+    document.getElementById("btn-random-avatar").addEventListener("click", () => {
+      if (!currentAddress) {
+        alert("Connect your wallet first.");
+        return;
+      }
+      const randomSeed = currentAddress.toLowerCase().replace(/^0x/, "");
+      const url = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(randomSeed)}`;
+      avatarUrlInput.value = url;
+      updateAvatarPreview();
+    });
+
+    document.getElementById("btn-save-profile").addEventListener("click", async () => {
+      if (!supabaseClient) {
+        alert("Supabase client is not configured. Please set SUPABASE_ANON_KEY in mm-login.html.");
+        return;
+      }
+      if (!currentAddress) {
+        alert("Connect your wallet first.");
+        return;
+      }
+      await saveProfileToSupabase();
+    });
+
+    walletButton.addEventListener("click", connectAndLogin);
+
+    function setStatus(status, obj) {
+      statusTextEl.textContent = "Status: " + status;
+      resultBox.textContent = obj ? JSON.stringify(obj, null, 2) : "{}";
+
+      statusPill.classList.remove("idle", "error");
+      if (status === "idle") {
+        statusPill.classList.add("idle");
+      } else if (status.startsWith("error")) {
+        statusPill.classList.add("error");
+      }
+    }
+
+    function setWalletConnected(address) {
+      walletButton.classList.remove("disconnected");
+      walletLabel.textContent = address
+        ? address.slice(0, 6) + "..." + address.slice(-4)
+        : "Connected";
+    }
+
+    function setWalletDisconnected() {
+      walletButton.classList.add("disconnected");
+      walletLabel.textContent = "Connect Wallet";
+    }
+
+    async function ensureBaseNetwork() {
+      if (!window.ethereum) return;
+
+      const chainId = await window.ethereum.request({ method: "eth_chainId" });
+      if (chainId === BASE_CHAIN_ID_HEX) return;
+
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: BASE_CHAIN_ID_HEX }]
+        });
+      } catch (err) {
+        // ако мрежата я няма – пробваме да я добавим
+        if (err.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: BASE_CHAIN_ID_HEX,
+                chainName: "Base",
+                nativeCurrency: { name: "Ethereum", symbol: "ETH", decimals: 18 },
+                rpcUrls: ["https://mainnet.base.org"],
+                blockExplorerUrls: ["https://basescan.org"]
+              }]
+            });
+          } catch (addErr) {
+            console.error("Failed to add Base network", addErr);
+          }
+        } else {
+          console.warn("User rejected network switch", err);
+        }
+      }
+    }
+
+    async function connectAndLogin() {
+      try {
+        if (!window.ethereum) {
+          alert("MetaMask (or another EVM wallet) was not detected in this browser.");
+          return;
+        }
+
+        setStatus("connecting wallet...");
+        await ensureBaseNetwork();
+
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts"
+        });
+        if (!accounts || !accounts.length) {
+          setStatus("error: no accounts found");
+          return;
+        }
+        const address = accounts[0];
+        currentAddress = address;
+        walletAddressInput.value = address;
+        setWalletConnected(address);
+        updateAvatarPreview();
+
+        setStatus("fetching nonce...");
+        const nonceRes = await fetch(SIWE_BASE + "/nonce");
+        if (!nonceRes.ok) {
+          const txt = await nonceRes.text();
+          setStatus("error: nonce failed", { status: nonceRes.status, body: txt });
+          return;
+        }
+        const nonceData = await nonceRes.json();
+        const nonce = nonceData.nonce;
+        const key   = nonceData.key;
+
+        const domain = window.location.host;
+        const uri    = window.location.origin;
+        const statement = "Sign in to MemeMorph Digital Evolution (MemeMorphs Explorer).";
+
+        const siweMessage =
+`${domain} wants you to sign in with your Ethereum account:
+${address}
+
+${statement}
+
+URI: ${uri}
+Version: 1
+Chain ID: ${BASE_CHAIN_ID_DEC}
+Nonce: ${nonce}
+Issued At: ${new Date().toISOString()}`;
+
+        setStatus("awaiting signature...");
+        const signature = await window.ethereum.request({
+          method: "personal_sign",
+          params: [siweMessage, address]
+        });
+
+        setStatus("verifying...");
+        const verifyRes = await fetch(SIWE_BASE + "/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: siweMessage, signature, key })
+        });
+
+        if (!verifyRes.ok) {
+          const body = await verifyRes.text();
+          setStatus("error: verify failed", { status: verifyRes.status, body });
+          return;
+        }
+
+        const verifyData = await verifyRes.json();
+        currentToken = verifyData.token || null;
+
+        setStatus("login success", verifyData);
+
+        // показваме профила
+        profileLocked.style.display = "none";
+        profileSection.style.display = "block";
+
+        // зареждаме профил от Supabase (ако има)
+        if (supabaseClient) {
+          await loadProfileFromSupabase();
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus("error: " + (err.message || "unknown"), { error: String(err) });
+      }
+    }
+
+    function updateAvatarPreview() {
+      const url = avatarUrlInput.value.trim();
+      if (url) {
+        avatarImg.src = url;
+        avatarImg.style.display = "block";
+        avatarInitials.style.display = "none";
+      } else {
+        avatarImg.style.display = "none";
+        avatarInitials.style.display = "flex";
+        if (currentAddress) {
+          avatarInitials.textContent = (currentAddress.slice(2,4) + currentAddress.slice(-2)).toUpperCase();
+        } else {
+          avatarInitials.textContent = "MM";
+        }
+      }
+    }
+
+    async function loadProfileFromSupabase() {
+      try {
+        if (!currentAddress) return;
+        setStatus("loading profile...");
+        const { data, error } = await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("address", currentAddress.toLowerCase())
+          .maybeSingle();
+
+        if (error && error.code !== "PGRST116") { // no rows
+          console.warn("Profile load error", error);
+          setStatus("error: profile load", error);
+          return;
+        }
+
+        if (data) {
+          displayNameInput.value = data.username || "";
+          handleInput.value      = data.username_handle || "";
+          bioInput.value         = data.bio_text || "";
+          avatarUrlInput.value   = data.avatar_url || "";
+          updateAvatarPreview();
+          setStatus("login success (profile loaded)", data);
+        } else {
+          // няма запис – създаваме празен профил с адрес
+          updateAvatarPreview();
+          setStatus("login success (new profile)");
+        }
+      } catch (err) {
+        console.error("loadProfileFromSupabase error", err);
+        setStatus("error: profile load", { error: String(err) });
+      }
+    }
+
+    async function saveProfileToSupabase() {
+      try {
+        const username = displayNameInput.value.trim();
+        const handle   = handleInput.value.trim();
+        const bio      = bioInput.value.trim();
+        const avatar   = avatarUrlInput.value.trim();
+
+        const row = {
+          address: currentAddress.toLowerCase(),
+          username,
+          username_handle: handle,
+          bio_text: bio,
+          avatar_url: avatar || null,
+          updated_at: new Date().toISOString()
+        };
+
+        setStatus("saving profile...");
+        const { data, error } = await supabaseClient
+          .from("profiles")
+          .upsert(row, { onConflict: "address" })
+          .select()
+          .maybeSingle();
+
+        if (error) {
+          console.error("profile save error", error);
+          setStatus("error: profile save", error);
+          alert("Profile save error: " + (error.message || "see console"));
+          return;
+        }
+
+        setStatus("profile save success", data);
+        alert("Profile saved.");
+      } catch (err) {
+        console.error("saveProfileToSupabase", err);
+        setStatus("error: profile save", { error: String(err) });
+        alert("Profile save error: " + String(err));
+      }
+    }
+
+    // първоначално състояние
+    setStatus("idle");
+    setWalletDisconnected();
+    updateAvatarPreview();
+  </script>
+</body>
+</html>
