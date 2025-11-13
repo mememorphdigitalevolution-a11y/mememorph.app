@@ -2,31 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MemeMorphs – Digital Evolution Dashboard</title>
+  <title>MemeMorphs – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     :root {
       --bg-main: #050510;
       --bg-panel: #0b0b1c;
-      --bg-panel-soft: #101026;
+      --bg-panel-soft: #111125;
       --accent-pink: #ff5fd2;
       --accent-cyan: #24e0ff;
       --accent-yellow: #ffc857;
       --text-main: #f4f4ff;
       --text-soft: #a6a9d9;
       --border-soft: #252545;
-      --chip-bg: #14142b;
-      --chip-pill: #1f1f3b;
-      --danger: #ff6b6b;
-      --ok: #2ecc71;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -35,27 +27,20 @@
       min-height: 100vh;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
-    /* TOP BAR */
+    /* TOP BAR – близко до първоначалния вид */
 
-    .mm-topbar-wrap {
+    .topbar-wrap {
       position: sticky;
       top: 0;
       z-index: 20;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(
-        to bottom,
-        rgba(5, 5, 16, 0.95),
-        rgba(5, 5, 16, 0.82)
-      );
+      background: linear-gradient(to bottom, rgba(5, 5, 16, 0.96), rgba(5, 5, 16, 0.88));
       border-bottom: 1px solid rgba(102, 51, 255, 0.25);
+      backdrop-filter: blur(14px);
     }
 
-    .mm-topbar {
+    .topbar {
       max-width: 1200px;
       margin: 0 auto;
       padding: 10px 20px;
@@ -64,15 +49,15 @@
       gap: 18px;
     }
 
-    .mm-logo {
+    .logo {
       display: flex;
       align-items: center;
       gap: 10px;
       padding-right: 18px;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .mm-logo-icon {
+    .logo-icon {
       width: 32px;
       height: 32px;
       border-radius: 999px;
@@ -86,69 +71,62 @@
       box-shadow: 0 0 16px rgba(255, 95, 210, 0.6);
     }
 
-    .mm-logo-text {
+    .logo-text {
       display: flex;
       flex-direction: column;
       line-height: 1.1;
     }
 
-    .mm-logo-main {
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    .mm-logo-sub {
+    .logo-main { font-weight: 700; font-size: 18px; }
+    .logo-sub {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--text-soft);
     }
 
-    .mm-nav {
+    .nav {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-left: 10px;
+      margin-left: 12px;
       flex: 1;
     }
 
-    .mm-nav-link {
+    .nav-link {
       font-size: 13px;
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 999px;
       color: var(--text-soft);
       transition: all 0.15s ease;
-      position: relative;
     }
-
-    .mm-nav-link:hover {
-      background: rgba(255, 255, 255, 0.04);
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
     }
-
-    .mm-nav-link.active {
+    .nav-link.active {
       background: linear-gradient(90deg, #ff5fd2, #24e0ff);
       color: #050510;
       font-weight: 600;
       box-shadow: 0 0 14px rgba(255, 95, 210, 0.55);
     }
 
-    .mm-energy-row {
+    .energy-row {
       display: flex;
       gap: 6px;
-      margin-left: 8px;
+      margin-left: 10px;
       flex-wrap: wrap;
     }
 
     .energy-chip {
-      background: var(--chip-bg);
+      background: #111125;
       border-radius: 999px;
       padding: 4px 10px;
       font-size: 11px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .energy-pill {
@@ -162,29 +140,25 @@
     .energy-pill.spark { background: linear-gradient(90deg,#ff8c37,#ffdd5c); }
     .energy-pill.lumin { background: linear-gradient(90deg,#37c8ff,#9b8cff); }
     .energy-pill.trend { background: linear-gradient(90deg,#ff4f9a,#ffb347); }
-    .energy-pill.mem { background: linear-gradient(90deg,#ff9ff3,#feca57); }
-    .energy-pill.byte { background: linear-gradient(90deg,#54a0ff,#01a3a4); }
+    .energy-pill.mem   { background: linear-gradient(90deg,#ff9ff3,#feca57); }
+    .energy-pill.byte  { background: linear-gradient(90deg,#54a0ff,#01a3a4); }
     .energy-pill.chaos { background: linear-gradient(90deg,#5f27cd,#ff6b6b); }
 
-    .energy-amount {
-      color: #f7f7ff;
-      font-weight: 600;
-      font-size: 11px;
-    }
+    .energy-amount { font-weight: 600; }
 
-    .mm-right {
+    .top-right {
       margin-left: auto;
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .wallet-chip {
+    .wallet-btn {
       border-radius: 999px;
-      background: var(--chip-pill);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: #18182f;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-main);
-      padding: 6px 14px;
+      padding: 7px 16px;
       font-size: 12px;
       display: inline-flex;
       align-items: center;
@@ -192,106 +166,88 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
-
-    .wallet-chip span {
-      pointer-events: none;
+    .wallet-btn:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 14px rgba(36, 224, 255, 0.5);
     }
-
-    .wallet-chip:hover {
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 0 12px rgba(36, 224, 255, 0.35);
+    .wallet-btn.connected {
+      border-color: rgba(36, 224, 255, 0.9);
+      box-shadow: 0 0 20px rgba(36, 224, 255, 0.7);
     }
-
-    .wallet-chip.connected {
-      border-color: rgba(36, 224, 255, 0.85);
-      box-shadow: 0 0 18px rgba(36, 224, 255, 0.6);
-    }
-
-    .wallet-label {
-      color: var(--text-soft);
-    }
-
+    .wallet-label { color: var(--text-soft); font-size: 11px; }
     .wallet-address {
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 11px;
     }
 
-    /* PAGE WRAP */
+    @media (max-width: 900px) {
+      .topbar { flex-wrap: wrap; }
+      .nav { flex-wrap: wrap; }
+      .top-right { width: 100%; justify-content: flex-end; }
+    }
 
-    .mm-page {
+    /* PAGE */
+
+    .page {
       max-width: 1200px;
-      margin: 20px auto 40px;
+      margin: 18px auto 40px;
       padding: 0 20px 40px;
     }
 
-    .mm-hero {
+    .hero {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
       gap: 24px;
-      margin-bottom: 26px;
       align-items: stretch;
+      margin-bottom: 26px;
     }
-
     @media (max-width: 900px) {
-      .mm-hero {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .mm-topbar {
-        flex-wrap: wrap;
-      }
-      .mm-nav {
-        flex-wrap: wrap;
-      }
-      .mm-right {
-        width: 100%;
-        justify-content: flex-end;
-      }
+      .hero { grid-template-columns: minmax(0, 1fr); }
     }
 
-    .mm-hero-main {
+    .hero-main {
       background: radial-gradient(circle at top left, #241847, #0b0b1c);
       border-radius: 18px;
-      padding: 22px 22px 20px;
+      padding: 22px;
       border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
     }
 
-    .mm-tagline {
-      font-size: 13px;
+    .tagline {
+      font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.18em;
       color: var(--accent-cyan);
       margin-bottom: 8px;
     }
 
-    .mm-title {
-      font-size: 30px;
+    .title {
+      font-size: 28px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-
-    .mm-title span {
-      background: linear-gradient(90deg, #ff5fd2, #24e0ff);
+    .title span {
+      background: linear-gradient(90deg,#ff5fd2,#24e0ff);
       -webkit-background-clip: text;
       color: transparent;
     }
 
-    .mm-subtitle {
+    .subtitle {
       font-size: 14px;
       color: var(--text-soft);
       max-width: 420px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .mm-hero-actions {
+    .hero-actions {
       display: flex;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
 
-    .mm-btn-primary {
-      background: linear-gradient(135deg, #ff5fd2, #ff9ff3);
+    .btn-main {
+      background: linear-gradient(135deg,#ff5fd2,#ff9ff3);
       border-radius: 999px;
       padding: 9px 18px;
       border: none;
@@ -299,277 +255,188 @@
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 14px 32px rgba(255, 95, 210, 0.5);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      box-shadow: 0 14px 32px rgba(255,95,210,0.5);
     }
+    .btn-main:hover { box-shadow: 0 18px 38px rgba(255,95,210,0.7); }
 
-    .mm-btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(255, 95, 210, 0.7);
-    }
-
-    .mm-btn-secondary {
+    .btn-ghost {
       background: transparent;
       border-radius: 999px;
       padding: 9px 18px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255,255,255,0.25);
       color: var(--text-main);
       font-weight: 500;
       font-size: 14px;
       cursor: pointer;
-      transition: background 0.1s ease, border-color 0.1s ease, transform 0.1s ease;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.5);
     }
 
-    .mm-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .mm-hero-flags {
+    .hero-badges {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       font-size: 11px;
       color: var(--text-soft);
     }
-
-    .mm-hero-flag {
+    .hero-badge {
       padding: 4px 9px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.26);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0,0,0,0.26);
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
-    .mm-hero-stats {
-      margin-top: 16px;
+    .hero-stats {
+      margin-top: 14px;
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       font-size: 11px;
-      color: var(--text-soft);
     }
-
-    .mm-hero-stat {
+    .hero-stat {
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.06);
       display: inline-flex;
       gap: 4px;
       align-items: baseline;
+      color: var(--text-soft);
     }
-
-    .mm-hero-stat span.value {
+    .hero-stat .value {
       font-weight: 700;
       color: #fff;
       font-size: 13px;
     }
 
-    .mm-hero-right {
+    .hero-right {
       background: radial-gradient(circle at top, #331a4f, #080816);
       border-radius: 18px;
-      padding: 18px 18px 16px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
-    .mm-panel-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
+    .panel-title { font-size: 14px; font-weight: 600; }
+    .panel-subtitle { font-size: 12px; color: var(--text-soft); }
 
-    .mm-panel-subtitle {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 10px;
-    }
-
-    .mm-cards-row {
+    .cards-row {
+      margin-top: 8px;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 4px;
     }
-
     @media (max-width: 700px) {
-      .mm-cards-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .cards-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    .mm-card {
-      background: linear-gradient(180deg, #25224b, #15152b);
+    .card {
+      background: linear-gradient(180deg,#25224b,#15152b);
       border-radius: 14px;
       padding: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255,255,255,0.06);
       position: relative;
       overflow: hidden;
     }
-
-    .mm-card-label {
+    .card-label,
+    .card-energy {
       position: absolute;
       top: 7px;
-      left: 8px;
       font-size: 10px;
       padding: 2px 6px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0,0,0,0.55);
       color: #fff;
       font-weight: 600;
     }
+    .card-label { left: 8px; }
+    .card-energy { right: 8px; }
 
-    .mm-card-energy {
-      position: absolute;
-      top: 7px;
-      right: 8px;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .mm-card-art {
+    .card-art {
       height: 96px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #ff5f6c, #ffc371);
+      background: linear-gradient(135deg,#ff5f6c,#ffc371);
       margin-top: 10px;
     }
+    .card-art.lumin { background: linear-gradient(135deg,#4facfe,#00f2fe); }
+    .card-art.spark { background: linear-gradient(135deg,#ffe259,#ffa751); }
 
-    .mm-card-art.lumin {
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-    }
+    .card-name { margin-top: 8px; font-size: 12px; font-weight: 600; }
+    .card-price { margin-top: 2px; font-size: 11px; color: var(--text-soft); }
+    .card-price span { color: var(--accent-yellow); font-weight: 600; }
 
-    .mm-card-art.spark {
-      background: linear-gradient(135deg, #ffe259, #ffa751);
-    }
+    .section { margin-top: 24px; }
 
-    .mm-card-name {
-      margin-top: 8px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .mm-card-price {
-      margin-top: 2px;
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .mm-card-price span {
-      color: var(--accent-yellow);
-      font-weight: 600;
-    }
-
-    .mm-section {
-      margin-top: 24px;
-    }
-
-    .mm-section-header {
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
+    .section-title { font-size: 15px; font-weight: 600; }
+    .section-link { font-size: 12px; color: var(--accent-cyan); }
 
-    .mm-section-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .mm-section-link {
-      font-size: 12px;
-      color: var(--accent-cyan);
-    }
-
-    .mm-stats-row {
+    .stats-row {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
-
     @media (max-width: 900px) {
-      .mm-stats-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    .mm-stat-card {
+    .stat-card {
       background: var(--bg-panel);
       border-radius: 14px;
       padding: 12px 13px 11px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255,255,255,0.06);
     }
+    .stat-label { font-size: 11px; color: var(--text-soft); margin-bottom: 8px; }
+    .stat-value { font-size: 20px; font-weight: 700; }
+    .stat-foot { margin-top: 5px; font-size: 10px; color: var(--text-soft); }
 
-    .mm-stat-label {
-      font-size: 11px;
-      color: var(--text-soft);
-      margin-bottom: 8px;
-    }
-
-    .mm-stat-value {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .mm-stat-foot {
-      margin-top: 5px;
-      font-size: 10px;
-      color: var(--text-soft);
-    }
-
-    .mm-activity {
+    .activity {
       margin-top: 20px;
       background: var(--bg-panel-soft);
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255,255,255,0.06);
       padding: 14px 14px 10px;
     }
 
-    .mm-activity-table {
+    .activity-table {
       margin-top: 8px;
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
-    .mm-activity-row {
+    .activity-row {
       display: grid;
       grid-template-columns: 1.6fr 0.9fr 0.7fr;
       gap: 10px;
       padding: 8px 11px;
       font-size: 12px;
-      background: rgba(8, 8, 22, 0.9);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      background: rgba(8,8,22,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
-
-    .mm-activity-row:nth-child(2n) {
-      background: rgba(12, 12, 30, 0.95);
+    .activity-row:nth-child(2n) {
+      background: rgba(12,12,30,0.95);
     }
-
-    .mm-activity-main {
-      font-weight: 500;
-    }
-
-    .mm-activity-time {
-      color: var(--text-soft);
-      font-size: 11px;
-    }
-
-    .mm-activity-address {
+    .activity-main { font-weight: 500; }
+    .activity-time { color: var(--text-soft); font-size: 11px; }
+    .activity-address {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 11px;
       color: var(--text-soft);
       text-align: right;
     }
 
-    .mm-footer {
+    .footer {
       margin-top: 16px;
       font-size: 11px;
       color: var(--text-soft);
@@ -577,69 +444,63 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid rgba(255,255,255,0.06);
       padding-top: 10px;
-    }
-
-    .mm-footer a {
-      color: var(--accent-cyan);
-      font-size: 11px;
     }
   </style>
 </head>
-
 <body>
-  <div class="mm-topbar-wrap">
-    <header class="mm-topbar">
-      <div class="mm-logo">
-        <div class="mm-logo-icon">M</div>
-        <div class="mm-logo-text">
-          <div class="mm-logo-main">MemeMorphs</div>
-          <div class="mm-logo-sub">Digital evolution</div>
+  <div class="topbar-wrap">
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-icon">M</div>
+        <div class="logo-text">
+          <div class="logo-main">MemeMorphs</div>
+          <div class="logo-sub">Digital evolution</div>
         </div>
       </div>
 
-      <nav class="mm-nav">
-        <a href="dashboard.html" class="mm-nav-link active">Dashboard</a>
-        <a href="#" class="mm-nav-link">Mint</a>
-        <a href="#" class="mm-nav-link">Evolve</a>
-        <a href="#" class="mm-nav-link">Breed</a>
-        <a href="#" class="mm-nav-link">Battle</a>
-        <a href="#" class="mm-nav-link">Market</a>
-        <a href="#" class="mm-nav-link">Vault</a>
-        <a href="#" class="mm-nav-link">Social</a>
-        <a href="mm-login.html" class="mm-nav-link" id="profileLink">Profile</a>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+        <a href="#" class="nav-link">Mint</a>
+        <a href="#" class="nav-link">Evolve</a>
+        <a href="#" class="nav-link">Breed</a>
+        <a href="#" class="nav-link">Battle</a>
+        <a href="#" class="nav-link">Market</a>
+        <a href="#" class="nav-link">Vault</a>
+        <a href="#" class="nav-link">Social</a>
+        <a href="mm-login.html" class="nav-link" id="profileLink">Profile</a>
 
-        <div class="mm-energy-row">
+        <div class="energy-row">
           <div class="energy-chip">
             <span class="energy-pill spark">Spark</span>
-            <span class="energy-amount" id="energySpark">289</span>
+            <span class="energy-amount">289</span>
           </div>
           <div class="energy-chip">
             <span class="energy-pill lumin">Lumin</span>
-            <span class="energy-amount" id="energyLumin">243</span>
+            <span class="energy-amount">243</span>
           </div>
           <div class="energy-chip">
             <span class="energy-pill trend">TrendCore</span>
-            <span class="energy-amount" id="energyTrend">779</span>
+            <span class="energy-amount">779</span>
           </div>
           <div class="energy-chip">
             <span class="energy-pill mem">MemeDust</span>
-            <span class="energy-amount" id="energyMeme">925</span>
+            <span class="energy-amount">925</span>
           </div>
           <div class="energy-chip">
             <span class="energy-pill byte">ByteFuel</span>
-            <span class="energy-amount" id="energyByte">838</span>
+            <span class="energy-amount">838</span>
           </div>
           <div class="energy-chip">
             <span class="energy-pill chaos">ChaosFlux</span>
-            <span class="energy-amount" id="energyChaos">785</span>
+            <span class="energy-amount">785</span>
           </div>
         </div>
       </nav>
 
-      <div class="mm-right">
-        <button id="walletChip" class="wallet-chip">
+      <div class="top-right">
+        <button id="walletButton" class="wallet-btn">
           <span class="wallet-label" id="walletLabel">Connect</span>
           <span class="wallet-address" id="walletAddress">wallet</span>
         </button>
@@ -647,162 +508,146 @@
     </header>
   </div>
 
-  <main class="mm-page">
+  <main class="page">
     <!-- HERO -->
-    <section class="mm-hero">
-      <div class="mm-hero-main">
-        <div class="mm-tagline">Digital evolution ecosystem</div>
-        <h1 class="mm-title">Mint, evolve & trade <span>living MemeMorphs</span></h1>
-        <p class="mm-subtitle">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="tagline">Digital evolution ecosystem</div>
+        <h1 class="title">Mint, evolve & trade living <span>MemeMorphs</span></h1>
+        <p class="subtitle">
           Every MemeMorph feeds on internet energy, gains XP, levels up and unlocks new evolutions in real time.
         </p>
 
-        <div class="mm-hero-actions">
-          <button class="mm-btn-primary">Create MemeMorph</button>
-          <button class="mm-btn-secondary">Explore Marketplace</button>
+        <div class="hero-actions">
+          <button class="btn-main">Create MemeMorph</button>
+          <button class="btn-ghost">Explore Marketplace</button>
         </div>
 
-        <div class="mm-hero-flags">
-          <span class="mm-hero-flag">Live evolution feed</span>
-          <span class="mm-hero-flag">Dynamic energy economy</span>
-          <span class="mm-hero-flag">Base chain · On-chain state</span>
+        <div class="hero-badges">
+          <span class="hero-badge">Live evolution feed</span>
+          <span class="hero-badge">Dynamic energy economy</span>
+          <span class="hero-badge">Base chain · On-chain state</span>
         </div>
 
-        <div class="mm-hero-stats">
-          <div class="mm-hero-stat">
-            <span class="value" id="statTotal">3</span>
-            <span>MemeMorphs</span>
-          </div>
-          <div class="mm-hero-stat">
-            <span class="value" id="statEvo">5</span>
-            <span>Evolutions</span>
-          </div>
-          <div class="mm-hero-stat">
-            <span class="value" id="statCreators">1</span>
-            <span>Creators</span>
-          </div>
-          <div class="mm-hero-stat">
-            <span class="value" id="statVolume">0.00</span>
-            <span>ETH volume</span>
-          </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="value">3</span> <span>MemeMorphs</span></div>
+          <div class="hero-stat"><span class="value">5</span> <span>Evolutions</span></div>
+          <div class="hero-stat"><span class="value">1</span> <span>Creators</span></div>
+          <div class="hero-stat"><span class="value">0.00</span> <span>ETH volume</span></div>
         </div>
       </div>
 
-      <!-- RIGHT SIDE: TRENDING CARDS -->
-      <aside class="mm-hero-right">
-        <div class="mm-panel-title">Trending MemeMorphs</div>
-        <div class="mm-panel-subtitle">Live, evolving entities</div>
+      <aside class="hero-right">
+        <div class="panel-title">Trending MemeMorphs</div>
+        <div class="panel-subtitle">Live, evolving entities</div>
 
-        <div class="mm-cards-row">
-          <article class="mm-card">
-            <div class="mm-card-label">LVL 5</div>
-            <div class="mm-card-energy">Spark</div>
-            <div class="mm-card-art"></div>
-            <div class="mm-card-name">Luminflare — Ether Spark</div>
-            <div class="mm-card-price">Price: <span>0.01 ETH</span></div>
+        <div class="cards-row">
+          <article class="card">
+            <div class="card-label">LVL 5</div>
+            <div class="card-energy">Spark</div>
+            <div class="card-art"></div>
+            <div class="card-name">Luminflare — Ether Spark</div>
+            <div class="card-price">Price: <span>0.01 ETH</span></div>
           </article>
 
-          <article class="mm-card">
-            <div class="mm-card-label">LVL 4</div>
-            <div class="mm-card-energy">Lumin</div>
-            <div class="mm-card-art lumin"></div>
-            <div class="mm-card-name">Fluffemix — Neon Core Avatar</div>
-            <div class="mm-card-price">Price: <span>0.05 ETH</span></div>
+          <article class="card">
+            <div class="card-label">LVL 4</div>
+            <div class="card-energy">Lumin</div>
+            <div class="card-art lumin"></div>
+            <div class="card-name">Fluffemix — Neon Core Avatar</div>
+            <div class="card-price">Price: <span>0.05 ETH</span></div>
           </article>
 
-          <article class="mm-card">
-            <div class="mm-card-label">LVL 2</div>
-            <div class="mm-card-energy">Spark</div>
-            <div class="mm-card-art spark"></div>
-            <div class="mm-card-name">Glimzzip — Viral Hologram</div>
-            <div class="mm-card-price">Price: <span>0.02 ETH</span></div>
+          <article class="card">
+            <div class="card-label">LVL 2</div>
+            <div class="card-energy">Spark</div>
+            <div class="card-art spark"></div>
+            <div class="card-name">Glimzzip — Viral Hologram</div>
+            <div class="card-price">Price: <span>0.02 ETH</span></div>
           </article>
         </div>
       </aside>
     </section>
 
-    <!-- STATS CARDS -->
-    <section class="mm-section">
-      <div class="mm-section-header">
-        <h2 class="mm-section-title">Ecosystem Stats</h2>
+    <!-- STATS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Ecosystem Stats</h2>
       </div>
 
-      <div class="mm-stats-row">
-        <div class="mm-stat-card">
-          <div class="mm-stat-label">Total MemeMorphs</div>
-          <div class="mm-stat-value" id="statTotal2">3</div>
-          <div class="mm-stat-foot">On-chain entities</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total MemeMorphs</div>
+          <div class="stat-value">3</div>
+          <div class="stat-foot">On-chain entities</div>
         </div>
-
-        <div class="mm-stat-card">
-          <div class="mm-stat-label">Evolutions</div>
-          <div class="mm-stat-value" id="statEvo2">5</div>
-          <div class="mm-stat-foot">Level progressions</div>
+        <div class="stat-card">
+          <div class="stat-label">Evolutions</div>
+          <div class="stat-value">5</div>
+          <div class="stat-foot">Level progressions</div>
         </div>
-
-        <div class="mm-stat-card">
-          <div class="mm-stat-label">Creators</div>
-          <div class="mm-stat-value" id="statCreators2">1</div>
-          <div class="mm-stat-foot">Active MemeMorph alchemists</div>
+        <div class="stat-card">
+          <div class="stat-label">Creators</div>
+          <div class="stat-value">1</div>
+          <div class="stat-foot">Active MemeMorph alchemists</div>
         </div>
-
-        <div class="mm-stat-card">
-          <div class="mm-stat-label">Volume (ETH)</div>
-          <div class="mm-stat-value" id="statVolume2">0.00</div>
-          <div class="mm-stat-foot">Since Base launch</div>
+        <div class="stat-card">
+          <div class="stat-label">Volume (ETH)</div>
+          <div class="stat-value">0.00</div>
+          <div class="stat-foot">Since Base launch</div>
         </div>
       </div>
     </section>
 
     <!-- RECENT ACTIVITY -->
-    <section class="mm-section">
-      <div class="mm-activity">
-        <div class="mm-section-header">
-          <h2 class="mm-section-title">Recent Activity</h2>
+    <section class="section">
+      <div class="activity">
+        <div class="section-header">
+          <h2 class="section-title">Recent Activity</h2>
         </div>
 
-        <div class="mm-activity-table" id="activityTable">
-          <div class="mm-activity-row">
+        <div class="activity-table">
+          <div class="activity-row">
             <div>
-              <div class="mm-activity-main">Luminflare — Ether Spark evolved to Level 2</div>
-              <div class="mm-activity-time">13:44</div>
+              <div class="activity-main">Luminflare — Ether Spark evolved to Level 2</div>
+              <div class="activity-time">13:44</div>
             </div>
-            <div class="mm-activity-time">XP gain +120</div>
-            <div class="mm-activity-address">0x1f37…fcE2</div>
+            <div class="activity-time">XP gain +120</div>
+            <div class="activity-address">0x1f37…fcE2</div>
           </div>
 
-          <div class="mm-activity-row">
+          <div class="activity-row">
             <div>
-              <div class="mm-activity-main">Fluffemix — Neon Spar evolved to Level 5</div>
-              <div class="mm-activity-time">13:43</div>
+              <div class="activity-main">Fluffemix — Neon Spar evolved to Level 5</div>
+              <div class="activity-time">13:43</div>
             </div>
-            <div class="mm-activity-time">Energy shift: Lumin → Spark</div>
-            <div class="mm-activity-address">0x1f37…fcE2</div>
+            <div class="activity-time">Energy shift: Lumin → Spark</div>
+            <div class="activity-address">0x1f37…fcE2</div>
           </div>
 
-          <div class="mm-activity-row">
+          <div class="activity-row">
             <div>
-              <div class="mm-activity-main">Glimzzip — Viral Hologram evolved to Level 4</div>
-              <div class="mm-activity-time">13:42</div>
+              <div class="activity-main">Glimzzip — Viral Hologram evolved to Level 4</div>
+              <div class="activity-time">13:42</div>
             </div>
-            <div class="mm-activity-time">ChaosFlux pulse detected</div>
-            <div class="mm-activity-address">0x1f37…fcE2</div>
+            <div class="activity-time">ChaosFlux pulse detected</div>
+            <div class="activity-address">0x1f37…fcE2</div>
           </div>
         </div>
       </div>
     </section>
 
-    <footer class="mm-footer">
+    <footer class="footer">
       <span>© 2025 MemeMorphs. Open-source digital evolution.</span>
       <span>Powered by AI & Community</span>
     </footer>
   </main>
 
-  <!-- WALLET CONNECT + PROFILE GATE -->
+  <!-- WALLET LOGIC: само MetaMask + gate за Profile -->
   <script>
-    const walletChip = document.getElementById('walletChip');
+    const walletBtn = document.getElementById('walletButton');
     const walletLabel = document.getElementById('walletLabel');
-    const walletAddress = document.getElementById('walletAddress');
+    const walletAddressEl = document.getElementById('walletAddress');
     const profileLink = document.getElementById('profileLink');
 
     let walletConnected = false;
@@ -812,36 +657,21 @@
       return addr.slice(0, 6) + '...' + addr.slice(-4);
     }
 
-    function setDisconnectedUI() {
+    function setDisconnected() {
       walletConnected = false;
       currentAddress = null;
-      walletChip.classList.remove('connected');
+      walletBtn.classList.remove('connected');
       walletLabel.textContent = 'Connect';
-      walletAddress.textContent = 'wallet';
+      walletAddressEl.textContent = 'wallet';
     }
 
-    function setConnectedUI(address) {
+    function setConnected(address) {
       walletConnected = true;
       currentAddress = address;
-      walletChip.classList.add('connected');
+      walletBtn.classList.add('connected');
       walletLabel.textContent = 'Base wallet';
-      walletAddress.textContent = shorten(address);
+      walletAddressEl.textContent = shorten(address);
     }
-
-    // Инициализация – ако има съхранен адрес, показваме го
-    (function initWalletFromStorage() {
-      try {
-        const saved = localStorage.getItem('mm_wallet_address');
-        if (saved) {
-          setConnectedUI(saved);
-        } else {
-          setDisconnectedUI();
-        }
-      } catch (e) {
-        console.warn('LocalStorage not available', e);
-        setDisconnectedUI();
-      }
-    })();
 
     async function connectWallet() {
       if (!window.ethereum) {
@@ -853,48 +683,34 @@
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         if (!accounts || !accounts.length) {
           alert('Не беше върнат адрес от портфейла.');
-          setDisconnectedUI();
+          setDisconnected();
           return;
         }
-
-        const address = accounts[0];
-        setConnectedUI(address);
-
-        try {
-          localStorage.setItem('mm_wallet_address', address);
-        } catch (e) {
-          console.warn('Cannot write wallet to localStorage', e);
-        }
-
+        setConnected(accounts[0]);
       } catch (err) {
         console.error(err);
         alert('Wallet connection cancelled or failed.');
-        setDisconnectedUI();
+        setDisconnected();
       }
     }
 
-    walletChip.addEventListener('click', connectWallet);
+    walletBtn.addEventListener('click', connectWallet);
 
-    // Профилът се отваря само ако има свързан портфейл
-    if (profileLink) {
-      profileLink.addEventListener('click', function (e) {
-        if (!walletConnected || !currentAddress) {
-          e.preventDefault();
-          alert('Първо свържи портфейла от бутона "Connect wallet" горе вдясно, после отвори профила.');
-        }
-      });
-    }
+    // Profile – само ако има свързан портфейл
+    profileLink.addEventListener('click', function (e) {
+      if (!walletConnected || !currentAddress) {
+        e.preventDefault();
+        alert('Първо свържи портфейла от бутона "Connect wallet" горе вдясно, после отвори профила.');
+      }
+    });
 
-    // Ако потребителят смени акаунта в MetaMask – обновяваме UI
+    // Ако се сменят акаунтите в MetaMask
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (!accounts || !accounts.length) {
-          setDisconnectedUI();
-          try { localStorage.removeItem('mm_wallet_address'); } catch (e) {}
+          setDisconnected();
         } else {
-          const address = accounts[0];
-          setConnectedUI(address);
-          try { localStorage.setItem('mm_wallet_address', address); } catch (e) {}
+          setConnected(accounts[0]);
         }
       });
     }
