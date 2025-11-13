@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MemeMorphs – Terms of Use</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #050812;
+      --bg-elevated: #0b0f1d;
+      --bg-card: #101528;
+      --bg-card-soft: #141a30;
+      --accent-pink: #ff4fd8;
+      --accent-blue: #26d3ff;
+      --accent-yellow: #ffc94d;
+      --accent-green: #38e17e;
+      --text-main: #f5f7ff;
+      --text-soft: #a6b0d8;
+      --border-soft: #262c44;
+      --chip-bg: #151b30;
+      --shadow-soft: 0 18px 45px rgba(0,0,0,0.65);
+      --radius-lg: 18px;
+      --radius-xl: 22px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #151636 0, #050812 40%, #02030a 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ---------- TOP NAVBAR (копирано от Dashboard) ---------- */
+
+    .mm-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: radial-gradient(circle at top left, #3b145f 0, #050812 55%, #050812 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+      backdrop-filter: blur(16px);
+    }
+
+    .mm-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .mm-nav-left { display: flex; align-items: center; gap: 10px; }
+
+    .mm-logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 20% 20%, #ffd0ff 0, #ff4fd8 45%, #7c3aed 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(255,79,216,0.7);
+      font-weight: 800;
+      font-size: 19px;
+      color: #12051d;
+    }
+
+    .mm-brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+    .mm-brand-main { font-weight: 700; letter-spacing: 0.03em; font-size: 17px; }
+    .mm-brand-sub { font-size: 11px; color: var(--text-soft); }
+
+    .mm-nav-center {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mm-nav-link {
+      font-size: 13px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      color: var(--text-soft);
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mm-nav-link span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4b5563;
+    }
+
+    /* Няма active за Terms – само Dashboard ще е active в dashboard.html */
+
+    .mm-nav-link:hover {
+      color: #e5e7ff;
+      background: rgba(15,23,42,0.9);
+      border-color: rgba(148,163,184,0.45);
+    }
+
+    .mm-nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .mm-wallet-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: linear-gradient(135deg,#020617,#020817 45%,#111827 100%);
+      border: 1px solid rgba(148,163,184,0.5);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+
+    .mm-wallet-chip:hover {
+      border-color: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,0.5);
+    }
+
+    .mm-wallet-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #ef4444;
+    }
+
+    .mm-wallet-chip.connected .mm-wallet-status-dot {
+      background: #22c55e;
+    }
+
+    .mm-wallet-label { color: var(--text-soft); }
+    .mm-wallet-address {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      color: #e5e7ff;
+    }
+
+    /* ---------- ENERGY BAR ---------- */
+
+    .mm-energy-bar {
+      max-width: 1200px;
+      margin: 4px auto 12px auto;
+      padding: 0 18px 6px 18px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mm-energy-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      border: 1px solid rgba(148,163,184,0.45);
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .mm-energy-dot { width: 10px; height: 10px; border-radius: 999px; }
+    .mm-energy-spark { background: radial-gradient(circle,#ffeb3b,#f97316); }
+    .mm-energy-lumin { background: radial-gradient(circle,#a5f3fc,#22d3ee); }
+    .mm-energy-trend { background: radial-gradient(circle,#fb7185,#ec4899); }
+    .mm-energy-dust { background: radial-gradient(circle,#fde68a,#facc15); }
+    .mm-energy-byte { background: radial-gradient(circle,#bfdbfe,#3b82f6); }
+    .mm-energy-chaos { background: radial-gradient(circle,#a855f7,#22c55e); }
+    .mm-energy-value { font-weight: 600; color: #e5e7ff; }
+
+    /* ---------- PAGE LAYOUT ---------- */
+
+    .mm-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 18px 40px 18px;
+    }
+
+    .mm-card-soft {
+      background: var(--bg-card-soft);
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(148,163,184,0.3);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 24px;
+    }
+
+    .mm-terms-title {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+
+    .mm-terms-sub {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+    }
+
+    .mm-terms-section {
+      margin-top: 18px;
+    }
+
+    .mm-terms-section h2 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .mm-terms-section p {
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .mm-terms-section ul {
+      margin-left: 18px;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    /* ---------- FOOTER ---------- */
+
+    .mm-footer {
+      max-width: 1200px;
+      margin: 26px auto 0 auto;
+      padding: 16px 18px 30px 18px;
+      border-top: 1px solid rgba(31,41,55,0.9);
+      font-size: 11px;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mm-footer-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mm-footer-links a { color: var(--text-soft); }
+    .mm-footer-links a:hover { color: var(--accent-blue); }
+
+    @media (max-width: 720px) {
+      .mm-nav-inner { flex-wrap: wrap; justify-content: space-between; }
+      .mm-nav-center { order: 3; justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="mm-nav">
+    <div class="mm-nav-inner">
+      <div class="mm-nav-left">
+        <div class="mm-logo-badge">M</div>
+        <div class="mm-brand-text">
+          <div class="mm-brand-main">MemeMorphs</div>
+          <div class="mm-brand-sub">Digital Evolution</div>
+        </div>
+      </div>
+
+      <nav class="mm-nav-center">
+        <a class="mm-nav-link" href="dashboard.html">
+          <span class="dot"></span> Dashboard
+        </a>
+        <a class="mm-nav-link" href="#mint">Mint</a>
+        <a class="mm-nav-link" href="#evolve">Evolve</a>
+        <a class="mm-nav-link" href="#breed">Breed</a>
+        <a class="mm-nav-link" href="#battle">Battle</a>
+        <a class="mm-nav-link" href="#market">Market</a>
+        <a class="mm-nav-link" href="#vault">Vault</a>
+        <a class="mm-nav-link" href="#social">Social</a>
+        <a class="mm-nav-link" href="profile.html">Profile</a>
+      </nav>
+
+      <div class="mm-nav-right">
+        <button id="walletChip" class="mm-wallet-chip" type="button">
+          <span class="mm-wallet-status-dot"></span>
+          <span class="mm-wallet-label" id="walletLabel">Connect</span>
+          <span class="mm-wallet-address" id="walletAddress">wallet</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ENERGY BAR -->
+  <section class="mm-energy-bar">
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-spark"></span> Spark
+      <span class="mm-energy-value">289</span>
+    </div>
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-lumin"></span> Lumin
+      <span class="mm-energy-value">243</span>
+    </div>
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-trend"></span> TrendCore
+      <span class="mm-energy-value">779</span>
+    </div>
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-dust"></span> MemeDust
+      <span class="mm-energy-value">925</span>
+    </div>
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-byte"></span> ByteFuel
+      <span class="mm-energy-value">838</span>
+    </div>
+    <div class="mm-energy-chip">
+      <span class="mm-energy-dot mm-energy-chaos"></span> ChaosFlux
+      <span class="mm-energy-value">785</span>
+    </div>
+  </section>
+
+  <!-- TERMS CONTENT -->
+  <main class="mm-page">
+    <section class="mm-card-soft">
+      <h1 class="mm-terms-title">Terms of Use</h1>
+      <p class="mm-terms-sub">
+        These Terms govern your access to and use of the MemeMorphs Digital Evolution ecosystem, including this website, on-chain assets, and any related tools or services.
+      </p>
+
+      <div class="mm-terms-section">
+        <h2>1. Overview</h2>
+        <p>
+          MemeMorphs is an experimental, community-driven digital project. Nothing on this site is financial advice or a guarantee of value. You are responsible for your own wallet, assets, and decisions.
+        </p>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>2. Eligibility & Wallet Responsibility</h2>
+        <p>
+          To interact with MemeMorphs you must use a compatible crypto wallet (for example MetaMask) and you must be legally allowed to use blockchain services in your region.
+        </p>
+        <ul>
+          <li>You are fully responsible for securing your wallet and private keys.</li>
+          <li>We cannot recover lost wallets, seed phrases or assets.</li>
+          <li>All transactions are executed directly on the blockchain and are irreversible.</li>
+        </ul>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>3. NFTs, Energy & In-Game Items</h2>
+        <p>
+          MemeMorph NFTs, energy balances, levels, and other in-game values are purely digital collectibles. They do not represent shares, securities, or guarantees of profit.
+        </p>
+        <p>
+          Secondary marketplace activity (on Zora, OpenSea, etc.) is subject to their own terms and fees.
+        </p>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>4. Acceptable Use</h2>
+        <ul>
+          <li>No illegal, hateful, or abusive behavior in connection with the project.</li>
+          <li>No attempts to attack smart contracts, databases, or other users.</li>
+          <li>No impersonation of the MemeMorphs team or other members.</li>
+        </ul>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>5. Changes to the Project</h2>
+        <p>
+          MemeMorphs is evolving. Features, rules, energy values, or mechanics may change over time. We may update these Terms from time to time; continued use of the site means you accept the latest version.
+        </p>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>6. No Warranty</h2>
+        <p>
+          The project is provided “as is” with no warranties of any kind. We are not liable for any losses related to gas fees, failed transactions, market volatility, or third-party services.
+        </p>
+      </div>
+
+      <div class="mm-terms-section">
+        <h2>7. Contact</h2>
+        <p>
+          For questions about these Terms you can reach the project team at: <strong>mememorph.digital.evolution@gmail.com</strong>.
+          For official legal use, consider reviewing these Terms with a qualified lawyer in your country.
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mm-footer">
+      <div>© 2025 MemeMorphs – Digital Evolution. All rights reserved.</div>
+      <div class="mm-footer-links">
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="rules.html">Project Rules</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- SIMPLE WALLET CHIP (само визуално, като при Dashboard) -->
+  <script>
+    const walletChip = document.getElementById('walletChip');
+    const walletLabel = document.getElementById('walletLabel');
+    const walletAddress = document.getElementById('walletAddress');
+
+    function shorten(addr) {
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+
+    async function connectWallet() {
+      if (!window.ethereum) {
+        alert('No wallet detected. Please install MetaMask or another Web3 wallet.');
+        return;
+      }
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+        walletChip.classList.add('connected');
+        walletLabel.textContent = 'Base wallet';
+        walletAddress.textContent = shorten(address);
+      } catch (err) {
+        console.error(err);
+        alert('Wallet connection cancelled or failed.');
+      }
+    }
+
+    walletChip.addEventListener('click', connectWallet);
+  </script>
+</body>
+</html>
