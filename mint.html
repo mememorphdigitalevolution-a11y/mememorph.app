@@ -651,12 +651,17 @@
         <!-- RIGHT: visual identity -->
         <div class="mm-card-soft">
           <h3 style="font-size:14px;margin-bottom:10px;">Visual Identity</h3>
-          <div class="mm-visual-box">
-            <div class="mm-visual-icon">✨</div>
-            <div>Upload cover art for your MemeMorph.</div>
-            <div class="mm-helper">Recommended: 1:1 ratio, PNG/JPEG, up to 10MB.</div>
+          <div class="mm-visual-box" id="imagePreviewBox">
+            <div class="mm-visual-icon" id="previewIcon">✨</div>
+            <div id="previewTextMain">Upload cover art for your MemeMorph.</div>
+            <div class="mm-helper" id="previewTextHelper">
+              Recommended: 1:1 ratio, PNG/JPEG, up to 10MB.
+            </div>
+            <!-- скритото изображение за preview -->
+            <img id="imagePreview" alt="MemeMorph preview"
+                 style="max-width:100%;max-height:100%;border-radius:14px;display:none;" />
           </div>
-          <input class="mm-upload-input" type="file" name="image" accept="image/*" />
+          <input id="imageInput" class="mm-upload-input" type="file" name="image" accept="image/*" />
         </div>
       </form>
 
@@ -667,9 +672,10 @@
             <span>Or generate with AI</span>
             <span class="sub">Describe your vision, use later for prompts.</span>
           </div>
-          <textarea class="mm-ai-textarea" placeholder="Describe the look, energy and story of this MemeMorph..."></textarea>
-          <button type="button" class="mm-ai-generate-btn">
-            Save AI description (placeholder)
+          <textarea class="mm-ai-textarea" id="aiTextarea"
+            placeholder="Describe the look, energy and story of this MemeMorph..."></textarea>
+          <button type="button" class="mm-ai-generate-btn" id="aiSaveButton">
+            Save AI description
           </button>
         </div>
 
@@ -693,7 +699,7 @@
 
   </main>
 
-  <!-- WALLET SCRIPT (същият като в dashboard) -->
+  <!-- WALLET SCRIPT (същият като в dashboard) + работещ mint/preview -->
   <script>
     const walletChip = document.getElementById('walletChip');
     const walletLabel = document.getElementById('walletLabel');
@@ -722,10 +728,147 @@
 
     walletChip.addEventListener('click', connectWallet);
 
-    // Временно поведение на бутона "Mint MemeMorph"
-    document.getElementById('mintButton').addEventListener('click', function () {
-      alert('Front-end mint form is ready. On-chain minting ще вържем на по-късен етап.');
-    });
+    // -------- IMAGE PREVIEW (работещо) --------
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewIcon = document.getElementById('previewIcon');
+    const previewTextMain = document.getElementById('previewTextMain');
+    const previewTextHelper = document.getElementById('previewTextHelper');
+
+    if (imageInput) {
+      imageInput.addEventListener('change', function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) {
+          // reset
+          imagePreview.src = '';
+          imagePreview.style.display = 'none';
+          previewIcon.style.display = 'block';
+          previewTextMain.style.display = 'block';
+          previewTextHelper.style.display = 'block';
+          return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file (PNG/JPEG).');
+          e.target.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          imagePreview.src = ev.target.result;
+          imagePreview.style.display = 'block';
+          previewIcon.style.display = 'none';
+          previewTextMain.style.display = 'none';
+          previewTextHelper.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // -------- AI DESCRIPTION BUTTON (локално, без външен AI) --------
+    const aiTextarea = document.getElementById('aiTextarea');
+    const aiSaveButton = document.getElementById('aiSaveButton');
+
+    if (aiSaveButton) {
+      aiSaveButton.addEventListener('click', function () {
+        const text = aiTextarea.value.trim();
+        if (!text) {
+          alert('Напиши поне едно изречение за AI описанието.');
+          return;
+        }
+
+        // ако description е празно, попълваме го с този текст
+        const descField = document.querySelector('textarea[name="description"]');
+        if (descField && !descField.value.trim()) {
+          descField.value = text;
+        }
+
+        // пазим драфта локално
+        try {
+          localStorage.setItem('mm_ai_description_draft', text);
+        } catch (e) {
+          console.warn('Cannot access localStorage', e);
+        }
+
+        alert('AI описанието е запазено локално в този браузър (без външен AI засега).');
+      });
+    }
+
+    // -------- MINT BUTTON (работи като демо + събира данни) --------
+    const mintButton = document.getElementById('mintButton');
+    const mintForm = document.getElementById('mintForm');
+
+    if (mintButton && mintForm) {
+      mintButton.addEventListener('click', function () {
+        // HTML5 валидация
+        if (!mintForm.reportValidity()) {
+          return;
+        }
+
+        const formData = new FormData(mintForm);
+        const name = formData.get('name');
+        const description = formData.get('description') || '';
+        const energy = formData.get('energy');
+        const rarity = formData.get('rarity');
+        const level = formData.get('level') || '1';
+        const imageFile = formData.get('image');
+        const aiText = aiTextarea ? aiTextarea.value.trim() : '';
+
+        let wallet = null;
+        if (walletChip.classList.contains('connected')) {
+          wallet = walletAddress.textContent;
+        } else {
+          const proceed = confirm(
+            'Wallet не е свързан. Този mint ще бъде запазен само локално като демо.\n\nИскаш ли да продължим?'
+          );
+          if (!proceed) return;
+        }
+
+        const minted = {
+          id: Date.now(),
+          name: String(name),
+          description: String(description),
+          energy: String(energy),
+          rarity: String(rarity),
+          level: String(level),
+          wallet: wallet,
+          aiText: aiText,
+          imageName: imageFile && imageFile.name ? imageFile.name : null,
+          createdAt: new Date().toISOString()
+        };
+
+        try {
+          const existing = JSON.parse(localStorage.getItem('mm_minted_demo') || '[]');
+          existing.push(minted);
+          localStorage.setItem('mm_minted_demo', JSON.stringify(existing));
+        } catch (e) {
+          console.warn('Cannot write to localStorage', e);
+        }
+
+        alert(
+          'Demo mint записан успешно (локално).\n\nИме: ' +
+          minted.name +
+          '\nЕнергия: ' +
+          minted.energy +
+          '\nRarity: ' +
+          minted.rarity +
+          '\nLevel: ' +
+          minted.level +
+          (wallet ? '\nWallet: ' + wallet : '\nWallet: not connected (demo only)')
+        );
+
+        // reset форма + preview
+        mintForm.reset();
+        if (imagePreview) {
+          imagePreview.src = '';
+          imagePreview.style.display = 'none';
+          previewIcon.style.display = 'block';
+          previewTextMain.style.display = 'block';
+          previewTextHelper.style.display = 'block';
+        }
+      });
+    }
   </script>
 </body>
 </html>
