@@ -840,14 +840,59 @@
 
   </main>
 
-  <!-- SIMPLE WALLET CONNECT (MetaMask only, визуален) -->
+  <!-- WALLET CONNECT (MetaMask + Base mainnet + localStorage) -->
   <script>
     const walletChip = document.getElementById('walletChip');
     const walletLabel = document.getElementById('walletLabel');
     const walletAddress = document.getElementById('walletAddress');
+    const STORAGE_KEY = 'mm_base_wallet';
 
     function shorten(addr) {
       return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+
+    function setDisconnected() {
+      walletChip.classList.remove('connected');
+      walletLabel.textContent = 'Connect';
+      walletAddress.textContent = 'wallet';
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function setConnected(address) {
+      walletChip.classList.add('connected');
+      walletLabel.textContent = 'Base wallet';
+      walletAddress.textContent = shorten(address);
+      localStorage.setItem(STORAGE_KEY, address);
+    }
+
+    async function ensureBaseNetwork() {
+      // Base mainnet chainId = 0x2105 (8453)
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x2105' }]
+        });
+      } catch (err) {
+        // 4902 = chain not added
+        if (err.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x2105',
+                chainName: 'Base',
+                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                rpcUrls: ['https://mainnet.base.org'],
+                blockExplorerUrls: ['https://basescan.org']
+              }]
+            });
+          } catch (addErr) {
+            console.error('Failed to add Base network', addErr);
+          }
+        } else {
+          console.error('Failed to switch to Base network', err);
+        }
+      }
     }
 
     async function connectWallet() {
@@ -856,18 +901,43 @@
         return;
       }
       try {
+        // 1) request accounts
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
-        walletChip.classList.add('connected');
-        walletLabel.textContent = 'Base wallet';
-        walletAddress.textContent = shorten(address);
+
+        // 2) switch/add Base
+        await ensureBaseNetwork();
+
+        // 3) update UI + save
+        setConnected(address);
       } catch (err) {
         console.error(err);
         alert('Wallet connection cancelled or failed.');
       }
     }
 
-    walletChip.addEventListener('click', connectWallet);
+    // Load saved wallet on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        setConnected(saved);
+      } else {
+        setDisconnected();
+      }
+
+      walletChip.addEventListener('click', connectWallet);
+
+      // If MetaMask changes accounts, update or disconnect
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+          if (accounts && accounts.length > 0) {
+            setConnected(accounts[0]);
+          } else {
+            setDisconnected();
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
